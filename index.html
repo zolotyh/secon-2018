@@ -47,6 +47,13 @@
         background-color:transparent;
       }
 
+      .reveal mark,
+      .reveal mark * {
+        color: #fff;
+        font-weight: 600;
+        background-color: #000;
+      }
+
       .reveal ul.solid-ul li {
         list-style:none;
       }
@@ -501,6 +508,9 @@ _.padStart('abc', 6);
           </code></pre>
 
         </section>
+        <section>
+          В javascript нет SDK
+        </section>
         <section data-transition="none">
           <h4>
             2 вывода
@@ -533,9 +543,36 @@ _.padStart('abc', 6);
             Уменьшение объема результирующего js
           </p>
           <ul>
-            <li class="fragment">gzip</li>
-            <li class="fragment">уменьшение самого файла</li>
+            <li class="fragment">
+              gzip
+              <span class="fragment">, Brotli</span>
+              <span class="fragment">, Zopfli</span>
+            </li>
+            <li class="fragment">уменьшение содержимого файла</li>
           </ul>
+        </section>
+        <section>
+          <pre><code>
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt; &lt;/head&gt;
+&lt;body&gt;
+  &lt;script src=&quot;./index.js&quot;&gt;&lt;/script&gt;    <!--5 megabytes-->
+&lt;/body&gt;
+&lt;/html&gt;
+          </code></pre>
+        </section>
+        <section>
+          <h3>Network &mdash; 100ms</h3>
+          <img src="img/network.png" alt="">
+        </section>
+        <section>
+          <h3>Parse &mdash; 300ms</h3>
+          <img src="img/parse.png" alt="">
+        </section>
+        <section>
+          <h3>Evaluate &mdash; 500ms</h3>
+          <img src="img/evaluate.png" alt="">
         </section>
         <section data-transition="none">
           <p>
@@ -546,95 +583,16 @@ _.padStart('abc', 6);
             <li><mark>уменьшение самого файла</mark></li>
           </ul>
         </section>
-        <section data-transition="slide,none">
-          <p>Чем ещё плох этот код?</p>
-          <pre><code data-trim data-noescape>
-import has from 'lodash/has';
-
-if (has([1, 2, 3], 2)) {
-  console.log("debug");
-}
-          </code></pre>
-        </section>
-        <section data-transition="slide,none">
-          <p>Чем ещё плох этот код?</p>
-          <pre><code data-trim data-noescape>
-import has from <mark>'lodash/has'</mark>;
-
-if (has([1, 2, 3], 2)) {
-  console.log("debug");
-}
-          </code></pre>
-        </section>
         <section>
           <p>
-            Dart
+            tree-shaking vs dead code illumination - <a href="https://medium.com/@Rich_Harris/tree-shaking-versus-dead-code-elimination-d3765df85c80">goo.gl/SJDr78</a>
           </p>
+          <p>Rich Harris</p>
+        </section>
+        <section data-background="img/tree.jpg"></section>
+        <section>
+          <p>module.js</p>
           <pre><code data-trim>
-void main(){
-  if([1,2,3].contains(2)){
-    print('debug');
-  }
-}
-          </code></pre>
-        </section>
-        <section>
-          Dart - 24K
-        </section>
-        <section>
-          <p>
-            Dart
-          </p>
-          <pre><code data-trim>
-void main(){
-  if([1,2,3].contains(2)){
-    print('debug');
-  }
-  [1,2,3].forEach((item){
-    print(item);
-  });
-
-}
-          </code></pre>
-        </section>
-        <section>
-          Dart - 52K
-        </section>
-        <section>
-          <p>Angular</p>
-          <ul>
-            <li>
-              <span style="display: inline-block; width: 12ex">
-                Typescript -
-              </span>284kb
-              <span class="fragment" data-fragment-index="3">💩</span>
-            </li>
-            <li class="fragment" data-fragment-index="1">
-              <span style="display: inline-block; width: 12ex">
-                Dart -
-              </span>220kb
-            </li>
-            <li class="fragment" data-fragment-index="2">
-              <span style="display: inline-block; width: 12ex">
-                Dart + uglify -
-              </span>192kb
-            </li>
-          </ul>
-        </section>
-        <section>
-          <img src="img/31.jpg" alt="">
-        </section>
-        <section>
-          <img src="img/32.jpg" alt="">
-        </section>
-        <section>
-          Копаем глубже
-        </section>
-        <section>
-          <p>
-            src/math.js
-          </p>
-          <pre><code>
 export function square(x) {
   return x * x;
 }
@@ -645,68 +603,366 @@ export function cube(x) {
           </code></pre>
         </section>
         <section>
-          <p>
-            src/index.js
-          </p>
+          <p>index.js</p>
           <pre><code data-trim>
-import { cube } from './math.js';
+import {cube} from './module'
 
-console.log(cube(10));
+console.log(cube(x))
+          </code></pre>
+        </section>
+        <section data-transition="slide none">
+          <pre><code data-trim style="max-height: 500px">
+...
+/* unused harmony export square */
+/* harmony export (immutable) */ __webpack_exports__["a"] = cube;
+function square(x) {
+  return x * x;
+}
+
+function cube(x) {
+  return x * x * x;
+}
+...
+          </code></pre>
+        </section>
+        <section data-transition="none slide">
+          <pre><code data-trim data-noescape style="max-height: 500px">
+...
+<mark>/* unused harmony export square */</mark>
+/* harmony export (immutable) */ __webpack_exports__["a"] = cube;
+function square(x) {
+  return x * x;
+}
+
+function cube(x) {
+  return x * x * x;
+}
+...
+          </code></pre>
+        </section>
+        <section>
+          <p>module.js</p>
+          <pre><code>
+export class MyClass {
+    print(){
+        console.log('find me');
+    }
+}
+          </code></pre>
+        </section>
+        <section data-transition="slide none">
+          <pre><code data-trim style="max-height: 600px">
+/* unused harmony export MyClass */
+var MyClass = function () {
+  function MyClass() {
+    babelHelpers.classCallCheck(this, MyClass);
+  }
+
+  MyClass.prototype.turn = function print() {
+    console.log('find me');
+  };
+
+  return MyClass;
+}();
+          </code></pre>
+        </section>
+        <section data-transition="none slide">
+          <pre><code data-noescape data-trim style="max-height: 600px">
+/* unused harmony export MyClass */
+<mark>var MyClass = function () {</mark>
+  function MyClass() {
+    babelHelpers.classCallCheck(this, MyClass);
+  }
+
+  MyClass.prototype.turn = function print() {
+    console.log('find me');
+  };
+
+  return MyClass;
+}();
+          </code></pre>
+        </section>
+        <section>
+          <p>
+            UglifyJS не понимает, что выкидывать
+          </p>
+        </section>
+        <section>
+          <img src="img/dasha.jpg" alt="">
+          <p>
+          Давайте поможем UglifyJS выкинуть ненужный класс!
+          </p>
+        </section>
+        <section>
+          <pre><code data-trim data-noescape>
+...
+/* unused harmony export MyClass */
+var MyClass  =  <mark>/*#__PURE__*/</mark> function () {
+...
+          </code></pre>
+        </section>
+        <section>
+          <p>Как починить</p>
+          <ul>
+            <li class="fragment">Babel 7</li>
+            <li class="fragment">Webpack</li>
+          </ul>
+        </section>
+        <section>
+          <p>index.js</p>
+          <pre><code data-trim>
+import {cube} from './module'
+
+console.log(cube(x))
+          </code></pre>
+        </section>
+        <section>
+!function(e){var r={};function t(n){if(r[n])return r[n].exports;var o=r[n]={i:n,l:!1,exports:{}};return e[n].call(o.exports,o,o.exports,t),o.l=!0,o.exports}t.m=e,t.c=r,t.d=function(e,r,n){t.o(e,r)||Object.defineProperty(e,r,{configurable:!1,enumerable:!0,get:n})},t.r=function(e){Object.defineProperty(e,"__esModule",{value:!0})},t.n=function(e){var r=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(r,"a",r),r},t.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)},t.p="",t(t.s=0)}([function(e,r,t){"use strict";t.r(r);var n;console.log((n=3)*n*n)}]);
+        </section>
+        <section>
+          А не слишком ли это много?!
+        </section>
+        <section>
+          <p>Код на Dart</p>
+          <pre><code>
+void main() {
+  print(cube(3));
+}
+
+int cube(int x) =&gt; x * x * x;
+int square(int x) =&gt; x * x;
+          </code></pre>
+        </section>
+        <section>
+          <p>Dart - 8kb</p>
+        </section>
+        <section>
+          <p>Cтандартная библиотека + </p>
+          <pre class="fragment"><code>
+...
+    main: function() {
+      H.printString("27");
+    }
+...
+          </code></pre>
+        </section>
+        <section>
+          Чудеса грядут
+        </section>
+        <section>
+          <pre><code data-trim>
+class Car {
+  Rudder rudder;
+  Wheel wheel;
+}
           </code></pre>
         </section>
         <section>
           <pre><code data-trim>
-var cube = function(a) {
-  return a * a;
+class Rudder {
+  void turn(){ print('turn'); }
 }
-console.log(cube(10));
-          </code></pre>
-      </section>
-      <section>
-        <p>
-          Dart
-        </p>
-        <pre><code>
-// Стандартная библиотека
-...
-    main: function() {
-      H.printString("100");
-    },
-...
-// Стандартная библиотека
-          </code></pre>
-      </section>
-      <section>
-        <pre><code>
+
 class Wheel {
-  pump(){
-    console.log('puuuuf');
-  }
+  void pump(){ print('pump'); }
 }
+          </code></pre>
+        </section>
+        <section>
+          <pre><code data-trim>
+void main(){
+  final car = new Car();
+  car.wheel = new Wheel();
+  car.rudder = new Rudder();
+  car.rudder.turn();
+}
+          </code></pre>
+        </section>
+        <section>
+          <p>Cтандартная библиотека + </p>
+          <pre class="fragment"><code>
+...
+main: function() {
+  H.printString("turn");
+}
+...
+          </code></pre>
+        </section>
+        <section>
+          <p>
+            &mdash; Почему так не может UglifyJS?!
+          </p>
+        </section>
+        <section>
+          <p>Потому что он использует AST</p>
+          <img src="img/ast.png" alt="">
+        </section>
+        <section>
+          Dart использует SSA форму для оптимизаций
+        </section>
+        <section>
+          <p>
+            <b>SSA</b> (<i>англ</i>. <b>Static single assignment form)</b> — промежуточное представление, используемое компиляторами, в котором каждой переменной значение присваивается лишь единожды
+          </p>
+        </section>
+        <section>
+          <p>Static Single Assignment Book</p>
+          <a href="http://ssabook.gforge.inria.fr/latest/book.pdf">http://ssabook.gforge.inria.fr/latest/book.pdf</a>
+        </section>
+        <section>
+          Я не хочу писать на мертвом языке, можно мне использовать SSA в JS?
+        </section>
+        <section>
+          <pre><code data-trim style="max-height: none">
+class Car {}
 
 class Rudder {
-  turn(){
-    console.log('turn');
-  }
+  turn(){console.log('turn');}
 }
 
-export {Wheel, Rudder}
-          </code></pre>
-    </section>
-    <section>
-      <pre><code data-trim>
-import { Wheel } from './module.js';
-
-class Car {
-  constructor(){
-    this.wheel = new Wheel();
-  }
+class Wheel {
+  pump(){console.log('pump')}
 }
 
-const car = new Car();
-car.wheel.pump();
+let car = new Car();
+car.wheel = new Wheel();
+car.rudder = new Rudder();
+
+car.rudder.turn();
           </code></pre>
-  </section>
+        </section>
+        <section data-transition="slide none">
+          <p>prepack.io</p>
+          <pre><code data-trim style="max-height: none">
+(function () {
+  var _$0 = this;
+  var _0 = class {};
+
+  Car = _0;
+  var _2 = class { turn() { console.log('turn'); } };
+
+  Rudder = _2;
+  var _5 = class { pump() { console.log('pump'); } };
+
+  Wheel = _5;
+  console.log("turn");
+}).call(this);
+          </code></pre>
+        </section>
+        <section data-transition="slide none">
+          <p>prepack.io</p>
+          <pre><code data-noescape data-trim style="max-height: none">
+(function () {
+  var _$0 = this;
+  var _0 = class {};
+
+  Car = _0;
+  var _2 = class { turn() { console.log('turn'); } };
+
+  Rudder = _2;
+  var _5 = class { pump() { console.log('pump'); } };
+
+  Wheel = _5;
+  <mark>console.log("turn")</mark>;
+}).call(this);
+          </code></pre>
+        </section>
+        <section>
+          *Prepack is still in an early development stage and not ready for production use just yet. Please try it out, give feedback, and help fix bugs.
+        </section>
+        <section>
+          GCC - Google Closure Compiler <a href="https://developers.google.com/closure/compiler/">https://developers.google.com/closure/compiler/</a>
+        </section>
+        <section>
+          <pre><code data-trim>
+            java -jar node_modules/google-closure-compiler/compiler.jar \
+              --compilation_level ADVANCED \
+              --language_in=ES6 \
+              --js ./src/index.js ./src/module.js &gt; out.dev.js
+          </code></pre>
+        </section>
+        <section>
+          <pre><code data-trim>
+console.log("turn");
+          </code></pre>
+        </section>
+        <section>
+          <p>
+            Подводные камни
+          </p>
+          <pre class="fragment"><code data-trim>
+  &lt;script&gt;
+    var rudder = new Rudder();
+  &lt;/script&gt;
+          </code></pre>
+        </section>
+        <section>
+          <pre><code>
+function displayNoteTitle(note) {
+  alert(note['myTitle']);
+}
+// Store the function in a global property referenced by a string:
+window['displayNoteTitle'] = displayNoteTitle;
+          </code></pre>
+        </section>
+        <section data-transition="slide none">
+          <pre><code data-trim>
+function displayNoteTitle(note) {
+  alert(note['myTitle']);
+}
+var flowerNote = {};
+flowerNote.myTitle = 'Flowers';
+
+alert(flowerNote.myTitle);
+displayNoteTitle(flowerNote);
+          </code></pre>
+        </section>
+        <section data-transition="none">
+          <pre><code data-trim data-noescape>
+function displayNoteTitle(note) {
+  <mark>alert(note['myTitle']);</mark>
+}
+var flowerNote = {};
+flowerNote.myTitle = 'Flowers';
+
+alert(flowerNote.myTitle);
+displayNoteTitle(flowerNote);
+          </code></pre>
+        </section>
+        <section data-transition="none slide">
+          <pre><code data-trim data-noescape>
+function displayNoteTitle(note) {
+  alert(note['myTitle']);
+}
+var flowerNote = {};
+<mark>flowerNote.myTitle = 'Flowers';</mark>
+
+alert(flowerNote.myTitle);
+displayNoteTitle(flowerNote);
+          </code></pre>
+        </section>
+        <section data-transition="slide none">
+          <pre><code>
+var a={};a.a="Flowers";alert(a.a);alert(a.myTitle);
+          </code></pre>
+        </section>
+        <section data-transition="none">
+          <pre><code data-trim data-noescape>
+var a={};<mark>a.a="Flowers"</mark>;alert(a.a);alert(a.myTitle);
+          </code></pre>
+        </section>
+        <section data-transition="none">
+          <pre><code data-trim data-noescape>
+var a={};a.a="Flowers";alert(a.a);alert(<mark>a.myTitle</mark>);
+          </code></pre>
+        </section>
+        <section>
+          <p>Сторонние библиотеки</p>
+          <pre><code data-trim data-noescape>
+java -jar compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS \
+  --js makeallnotes.js <mark>--externs extern1.js</mark> --externs extern2.js
+          </code></pre>
+        </section>
   <section>
     <p>Uglify vs Google Closure Compiler</p>
     <p>
