@@ -297,7 +297,7 @@ body {
 .reveal pre > code {
   font-size: 5vh;
   line-height: 1.2em;
-  font-family: PragmataProMono, monospace;
+  font-family: monospace;
   padding: .5em; }
 
 .reveal pre {
