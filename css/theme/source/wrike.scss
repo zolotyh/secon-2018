@@ -16,8 +16,8 @@
 // Override theme settings (see ../template/settings.scss)
 $backgroundColor: #fff;
 
-$mainColor: #1d1f24;
-$headingColor: #1d1f24;
+$mainColor: #373A3B;
+$headingColor: #373A3B;
 
 $mainFontSize: 7vh;
 $mainFont: Open Sans, sans-serif;
@@ -26,7 +26,7 @@ $headingTextShadow: none;
 $headingLetterSpacing: normal;
 $headingTextTransform: uppercase;
 $headingFontWeight: 500;
-$linkColor: #03af5e;
+$linkColor: #E9530E;
 $linkColorHover: lighten( $linkColor, 10% );
 $selectionBackgroundColor: #328fec;
 
@@ -47,7 +47,7 @@ section.has-dark-background {
 // ---------------------------------------------
 
 .reveal {
-	font-weight: 100;
+	font-weight: 400;
 }
 
 .reveal pre > code {
